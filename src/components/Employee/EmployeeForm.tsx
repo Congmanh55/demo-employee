@@ -13,7 +13,6 @@ import { v4 as uuidv4 } from "uuid";
 import useEmployeeStore from "../../store/useEmployeeStore";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
-import "react-toastify/dist/ReactToastify.css";
 import useEmployeeSchema from "../../hooks/useEmployeeSchema";
 import { yupResolver } from "@hookform/resolvers/yup";
 
