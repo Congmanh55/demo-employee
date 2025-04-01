@@ -12,7 +12,7 @@ import { IEmployee } from "../../types/type";
 import { v4 as uuidv4 } from "uuid";
 import useEmployeeStore from "../../store/useEmployeeStore";
 import { toast } from "react-toastify";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useEmployeeSchema from "../../hooks/useEmployeeSchema";
 import { yupResolver } from "@hookform/resolvers/yup";
 
@@ -31,6 +31,7 @@ const style = {
 
 export const EmployeeForm = (props: any) => {
     const { isOpen, setIsOpen, selectedEmployee } = props;
+    const [originalEmployee, setOriginalEmployee] = useState<IEmployee | null>(null);
     const employeeSchema = useEmployeeSchema();
     const {
         register,
@@ -55,6 +56,7 @@ export const EmployeeForm = (props: any) => {
 
     useEffect(() => {
         if (selectedEmployee) {
+            setOriginalEmployee(selectedEmployee);
             Object.keys(selectedEmployee).forEach((key) => {
                 setValue(
                     key as keyof IEmployee,
@@ -62,15 +64,32 @@ export const EmployeeForm = (props: any) => {
                 );
             });
         } else {
-            reset();
+            setOriginalEmployee(null);
+            reset({
+                name: "",
+                dob: "",
+                gender: "Male",
+                email: "",
+                address: "",
+            });
         }
     }, [selectedEmployee, setValue, reset]);
 
-    console.log(selectedEmployee);
-
     const onClose = () => {
+        if (originalEmployee) {
+            Object.keys(originalEmployee).forEach((key) => {
+                setValue(key as keyof IEmployee, originalEmployee[key as keyof IEmployee]);
+            });
+        } else {
+            reset({
+                name: "",
+                dob: "",
+                gender: "Male",
+                email: "",
+                address: "",
+            });
+        }
         setIsOpen(false);
-        reset();
     };
 
     const onSubmit = (data: IEmployee) => {
@@ -81,7 +100,13 @@ export const EmployeeForm = (props: any) => {
             addEmployee({ ...data, id });
             toast.success("Employee created successfully!");
         }
-        reset();
+        reset({
+            name: "",
+            dob: "",
+            gender: "Male",
+            email: "",
+            address: "",
+        });
         setIsOpen(false);
     };
 
